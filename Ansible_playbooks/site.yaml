@@ -1,0 +1,10 @@
+---
+- name: playbook for setup the cluster
+  gather_facts: false
+  hosts: 
+    - master_node
+    - worker_nodes
+  roles:
+    - kubernetes_setup_role
+    - kubernetes_master_role
+    - kubernetes_workers_role

@@ -11,7 +11,7 @@ terraform {
 
 
 module "network" {
-    source="C:\\Kaream\\ASU\\Learning\\DevOps_Project\\Terraform_IAC\\Networking"
+    source="/home/kaream_ubuntu/DevOps-project/Terraform_IAC/Networking"
  # any inputs will be passed to the module 
 
     vpc-name = var.vpc-destination

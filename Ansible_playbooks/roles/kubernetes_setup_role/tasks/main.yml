@@ -1,0 +1,100 @@
+---
+# tasks file for roles/kubernetes_setup_role
+
+   - name: disable UFW firewall for labs
+     service:
+        name: ufw
+        state: stopped
+        enabled: false
+
+   - name: Disable SWAP
+     shell: |
+       swapoff -a
+
+   - name: Disable SWAP in fstab
+     lineinfile:
+       path: /etc/fstab
+       regexp: '^.*swap.*$'
+       line: '#\0'
+       backrefs: yes
+
+   - name: Ensure the br_netfilter module is loaded
+     modprobe:
+      name: br_netfilter
+      state: present
+
+   - name: Ensure net.bridge.bridge-nf-call-iptables is set to 1
+     sysctl:
+        name: net.bridge.bridge-nf-call-iptables
+        value: '1'
+        state: present
+        reload: yes
+
+
+   - name: Ensure necessary packages are installed
+     apt:
+      name: apt-transport-https
+      state: present
+      #update_cache: yes
+
+   - name: Adding Docker GPG key
+     ansible.builtin.apt_key:
+       url: https://download.docker.com/linux/ubuntu/gpg
+       state: present
+
+   - name: Adding Docker Repository
+     apt_repository:
+       repo: deb [arch=amd64] https://download.docker.com/linux/ubuntu focal stable
+       state: present
+
+   - name: Installation of Docker
+     apt:
+      name: "{{ item }}"
+      state: present
+     loop:
+       - docker-ce
+       - docker-ce-cli
+       - containerd.io
+       - docker-compose
+
+   - name: Setting value of SystemdCgroup
+     shell: |
+       containerd config default | sudo tee /etc/containerd/config.toml | grep SystemdCgroup
+       sed -i 's/SystemdCgroup = false/SystemdCgroup = true/g' /etc/containerd/config.toml
+
+   - name : Starting Service of Docker
+     service:
+       name: docker
+       state: started
+       enabled: yes
+
+   - name: Add pubKey for k8s registries
+     apt_key:
+        keyring: /etc/apt/keyrings/kubernetes-apt-keyring.gpg
+        url: https://pkgs.k8s.io/core:/stable:/v1.30/deb/Release.key
+        state: present
+
+
+   - name: Add Kubernetes APT repository
+     apt_repository:
+        filename: /etc/apt/sources.list.d/kubernetes.list
+        repo: 'deb [signed-by=/etc/apt/keyrings/kubernetes-apt-keyring.gpg] https://pkgs.k8s.io/core:/stable:/v1.30/deb/ /'
+        state: present
+      
+
+   - name: Install kubelet and kubeadm
+     apt:
+        name: "{{ item }}"
+        state: present
+        update_cache: yes
+     loop:
+       - kubeadm
+       - kubelet
+
+   - name: start kubelet
+     service:
+       name: kubelet
+       enabled: yes
+       state: started
+
+

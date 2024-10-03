@@ -1,9 +1,9 @@
 [master_node]
-master ansible_host=44.198.168.29
+master ansible_host=44.193.73.54
 
 
 [worker_nodes]
-worker ansible_host=18.209.157.128
+worker ansible_host=44.202.226.144
 
 
 [monitor_servers]

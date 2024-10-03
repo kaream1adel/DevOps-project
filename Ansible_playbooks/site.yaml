@@ -6,5 +6,22 @@
     - worker_nodes
   roles:
     - kubernetes_setup_role
+    
+
+
+- name: playbook for setup the master
+  gather_facts: false
+  hosts: 
+    - master_node
+  roles:
     - kubernetes_master_role
+
+
+- name: playbook for setup the workers
+  gather_facts: false
+  hosts: 
+    - worker_nodes
+    - master_node
+  roles:
     - kubernetes_workers_role
+

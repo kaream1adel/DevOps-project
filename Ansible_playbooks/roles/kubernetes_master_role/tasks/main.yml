@@ -6,7 +6,7 @@
         state: present
 
   - name: initialize K8S cluster
-    shell: "kubeadm init --pod-network-cidr=172.16.0.0/16 --apiserver-advertise-address=192.168.100.5 --ignore-preflight-errors=all"
+    shell: "kubeadm init --pod-network-cidr=10.0.0.0/16 --apiserver-advertise-address=10.0.1.71 --ignore-preflight-errors=all"
 
   - name: create .kube directoryi and copy kube config file
     shell: "{{ item }}"
@@ -21,4 +21,24 @@
     args:
         chdir: $HOME
         creates: pod_network_setup.txt
+
+  # - name: Get token to join worker nodes to k8s cluster
+  #   ansible.builtin.shell: kubeadm token create  --print-join-command
+  #   register: kubernetes_join_command
+
+  # - name: Display k8s join command
+  #   ansible.builtin.debug:
+  #         msg: "{{ kubernetes_join_command.stdout }}"
+
+  # - name: Join the Worker nodes to the cluster.
+  #   shell: "{{ kubernetes_join_command.stdout }}"
+  #   register: joined_or_not
+  #   when: "'worker_nodes' in group_names"
+
+  # - name: Node join status
+  #   ansible.builtin.debug:
+  #     msg: "{{ joined_or_not.stdout }}"
+  #   when: "'worker_nodes' in group_names"
+
+
 

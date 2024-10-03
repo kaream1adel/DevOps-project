@@ -1,6 +1,6 @@
 resource "aws_instance" "Master_node" {
   ami           = "ami-0866a3c8686eaeeba"
-  instance_type = "t2.micro"
+  instance_type = "t3.medium"
   key_name = "cloud-key"
   associate_public_ip_address = true
   subnet_id = module.network.public-subnet1-id
@@ -14,7 +14,7 @@ resource "aws_instance" "Master_node" {
 
 resource "aws_instance" "Worker_node" {
   ami           = "ami-0866a3c8686eaeeba"
-  instance_type = "t2.micro"
+  instance_type = "t3.medium"
   key_name = "cloud-key"
   associate_public_ip_address = true
   subnet_id = module.network.public-subnet1-id
